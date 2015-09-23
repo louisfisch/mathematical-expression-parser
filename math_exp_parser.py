@@ -151,7 +151,7 @@ class Parser:
                 )
             return float(value)
         else:
-            if var in functions:
+            if var.lower() in functions:
                 value = self.parseParenthesis()
                 value = eval(var+"("+str(value)+")")
             else:
