@@ -1,6 +1,5 @@
 # A really simple expression evaluator supporting the 
 # four basic math functions, parentheses, and variables. 
-from math import *
 
 class Parser:
     def __init__(self, string, vars={}):
@@ -9,6 +8,35 @@ class Parser:
         self.vars = {
             'pi' : 3.141592653589793,
             'e' : 2.718281828459045
+        }
+        import math
+        self.functions = {
+            'abs': abs,
+            'acos': math.acos,
+            'asin': math.asin,
+            'atan': math.atan,
+            'atan2': math.atan2,
+            'ceil': math.ceil,
+            'cos': math.cos,
+            'cosh': math.cosh,
+            'degrees': math.degrees,
+            'exp': math.exp,
+            'fabs': math.fabs,
+            'floor': math.floor,
+            'fmod': math.fmod,
+            'frexp': math.frexp,
+            'hypot': math.hypot,
+            'ldexp': math.ldexp,
+            'log': math.log,
+            'log10': math.log10,
+            'modf': math.modf,
+            'pow': math.pow,
+            'radians': math.radians,
+            'sin': math.sin,
+            'sinh': math.sinh,
+            'sqrt': math.sqrt,
+            'tan': math.tan,
+            'tanh': math.tanh
         }
 
         for var in vars.keys():
@@ -130,36 +158,27 @@ class Parser:
  
     def parseVariable(self):
         self.skipWhitespace()
-        var = ''
-        functions = ['math','abs','acos' 'asin','atan','atan2','ceil','cos','cosh','degrees','exp','fabs','floor','fmod','frexp','hypot','ldexp','log','log10','modf','pow','radians','sin','sinh','sqrt','tan','tanh']
-        
+        var = []
         while self.hasNext():
             char = self.peek()
             
             if char.lower() in '_abcdefghijklmnopqrstuvwxyz0123456789':
-                var += char
+                var.append(char)
                 self.index += 1
             else:
                 break
-
-        if len(var) < 3:
+        var = ''.join(var)
+        function = self.functions.get(var.lower())
+        if function != None:
+            arg = self.parseParenthesis()
+            value = function(arg)
+        else:
             value = self.vars.get(var, None)
-            
             if value == None:
                 raise Exception(
                     "Unrecognized variable: '" + var + "'"
                 )
-            return float(value)
-        else:
-            if var.lower() in functions:
-                value = self.parseParenthesis()
-                value = eval(var+"("+str(value)+")")
-            else:
-                raise Exception(
-                         "Unrecognized function: '" + var + "'"
-                )
-
-            return float(value)
+        return float(value)
 
     def parseNumber(self):
         self.skipWhitespace()
@@ -214,13 +233,13 @@ def evaluate(expression, vars={}):
 
     return value
 
-
-print evaluate("cos(x+4*3) + 2 * 3", { 'x': 5  })
-print evaluate("exp(0)")
-print evaluate("-(1 + 2) * 3")
-print evaluate("(1-2)/3.0 + 0.0000")
-print evaluate("abs(-2) + pi / 4")
-print evaluate("(x + e * 10) / 10", { 'x' : 3 })
-print evaluate("1.0 / 3 * 6")
-print evaluate("(1 - 1 + -1) * pi")
-print evaluate("cos(pi) * 1")
+if __name__ == "__main__":
+    print evaluate("cos(x+4*3) + 2 * 3", { 'x': 5  })
+    print evaluate("exp(0)")
+    print evaluate("-(1 + 2) * 3")
+    print evaluate("(1-2)/3.0 + 0.0000")
+    print evaluate("abs(-2) + pi / 4")
+    print evaluate("(x + e * 10) / 10", { 'x' : 3 })
+    print evaluate("1.0 / 3 * 6")
+    print evaluate("(1 - 1 + -1) * pi")
+    print evaluate("cos(pi) * 1")
