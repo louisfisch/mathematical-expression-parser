@@ -1,22 +1,51 @@
 # A really simple expression evaluator supporting the 
 # four basic math functions, parentheses, and variables. 
-from math import *
+
+import math
+
+_CONSTANTS = {
+    'pi' : math.pi,
+    'e' : math.e,
+    'phi': (1 + 5 ** .5) / 2
+}
+
+_FUNCTIONS = {
+    'abs': abs,
+    'acos': math.acos,
+    'asin': math.asin,
+    'atan': math.atan,
+    'atan2': math.atan2,
+    'ceil': math.ceil,
+    'cos': math.cos,
+    'cosh': math.cosh,
+    'degrees': math.degrees,
+    'exp': math.exp,
+    'fabs': math.fabs,
+    'floor': math.floor,
+    'fmod': math.fmod,
+    'frexp': math.frexp,
+    'hypot': math.hypot,
+    'ldexp': math.ldexp,
+    'log': math.log,
+    'log10': math.log10,
+    'modf': math.modf,
+    'pow': math.pow,
+    'radians': math.radians,
+    'sin': math.sin,
+    'sinh': math.sinh,
+    'sqrt': math.sqrt,
+    'tan': math.tan,
+    'tanh': math.tanh
+}
 
 class Parser:
-    def __init__(self, string, vars={}):
+    def __init__(self, string, vars = None):
         self.string = string
         self.index = 0
-        self.vars = {
-            'pi' : 3.141592653589793,
-            'e' : 2.718281828459045
-        }
-
-        for var in vars.keys():
-            if self.vars.get(var) != None:
-                raise Exception(
-                        "Cannot redefine the value of " + var
-                )
-            self.vars[var] = vars[var]
+        self.vars = {} if vars == None else vars.copy()
+        for constant in _CONSTANTS.keys():
+            if self.vars.get(constant) != None:
+                raise Exception("Cannot redefine the value of " + var)
 
     def getValue(self):
         value = self.parseExpression()
@@ -130,36 +159,31 @@ class Parser:
  
     def parseVariable(self):
         self.skipWhitespace()
-        var = ''
-        functions = ['math','abs','acos' 'asin','atan','atan2','ceil','cos','cosh','degrees','exp','fabs','floor','fmod','frexp','hypot','ldexp','log','log10','modf','pow','radians','sin','sinh','sqrt','tan','tanh']
-        
+        var = []
         while self.hasNext():
             char = self.peek()
             
             if char.lower() in '_abcdefghijklmnopqrstuvwxyz0123456789':
-                var += char
+                var.append(char)
                 self.index += 1
             else:
                 break
+        var = ''.join(var)
+        
+        function = _FUNCTIONS.get(var.lower())
+        if function != None:
+            arg = self.parseParenthesis()
+            return float(function(arg))
+        
+        constant = _CONSTANTS.get(var.lower())
+        if constant != None:
+            return constant
 
-        if len(var) < 3:
-            value = self.vars.get(var, None)
+        value = self.vars.get(var, None)
+        if value != None:
+            return float(value)
             
-            if value == None:
-                raise Exception(
-                    "Unrecognized variable: '" + var + "'"
-                )
-            return float(value)
-        else:
-            if var.lower() in functions:
-                value = self.parseParenthesis()
-                value = eval(var+"("+str(value)+")")
-            else:
-                raise Exception(
-                         "Unrecognized function: '" + var + "'"
-                )
-
-            return float(value)
+        raise Exception("Unrecognized variable: '" + var + "'")
 
     def parseNumber(self):
         self.skipWhitespace()
@@ -192,7 +216,7 @@ class Parser:
 
         return float(strValue)
 
-def evaluate(expression, vars={}):
+def evaluate(expression, vars = None):
     try:
         p = Parser(expression, vars)
         value = p.getValue()
@@ -209,18 +233,17 @@ def evaluate(expression, vars={}):
     epsilon = 0.0000000001
     if int(value + epsilon) != int(value):
         return int(value + epsilon)
-    elif int(value - epsilon) != int(value):
+    if int(value - epsilon) != int(value):
         return int(value)
-
     return value
 
-
-print evaluate("cos(x+4*3) + 2 * 3", { 'x': 5  })
-print evaluate("exp(0)")
-print evaluate("-(1 + 2) * 3")
-print evaluate("(1-2)/3.0 + 0.0000")
-print evaluate("abs(-2) + pi / 4")
-print evaluate("(x + e * 10) / 10", { 'x' : 3 })
-print evaluate("1.0 / 3 * 6")
-print evaluate("(1 - 1 + -1) * pi")
-print evaluate("cos(pi) * 1")
+if __name__ == "__main__":
+    print evaluate("cos(x+4*3) + 2 * 3", { 'x': 5  })
+    print evaluate("exp(0)")
+    print evaluate("-(1 + 2) * 3")
+    print evaluate("(1-2)/3.0 + 0.0000")
+    print evaluate("abs(-2) + pi / 4")
+    print evaluate("(x + e * 10) / 10", { 'x' : 3 })
+    print evaluate("1.0 / 3 * 6")
+    print evaluate("(1 - 1 + -1) * pi")
+    print evaluate("cos(pi) * 1")
