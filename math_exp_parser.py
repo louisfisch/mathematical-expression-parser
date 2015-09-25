@@ -1,5 +1,7 @@
-# A really simple expression evaluator supporting the 
-# four basic math functions, parentheses, and variables. 
+"""
+A really simple expression evaluator supporting
+the four basic math operations, functions, parentheses, and variables. 
+"""
 
 import math
 
@@ -14,7 +16,7 @@ _FUNCTIONS = {
     'acos': math.acos,
     'asin': math.asin,
     'atan': math.atan,
-    'atan2': math.atan2,
+#   'atan2': math.atan2 - Not supported yet. Use `atan(x/y)`
     'ceil': math.ceil,
     'cos': math.cos,
     'cosh': math.cosh,
@@ -24,12 +26,12 @@ _FUNCTIONS = {
     'floor': math.floor,
     'fmod': math.fmod,
     'frexp': math.frexp,
-    'hypot': math.hypot,
+#   'hypot': math.hypot, - Not supported yet. Use `sqrt(x*x + y*y)`
     'ldexp': math.ldexp,
     'log': math.log,
     'log10': math.log10,
     'modf': math.modf,
-    'pow': math.pow,
+#   'pow': math.pow, - Not supported yet. Use `x**y`
     'radians': math.radians,
     'sin': math.sin,
     'sinh': math.sinh,
