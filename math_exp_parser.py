@@ -1,9 +1,5 @@
-"""
-A really simple expression evaluator supporting
-the four basic math operations, functions, parentheses, and variables. 
-"""
-
 import math
+
 
 _CONSTANTS = {
     'pi' : math.pi,
