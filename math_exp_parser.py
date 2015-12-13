@@ -12,7 +12,7 @@ _FUNCTIONS = {
     'acos': math.acos,
     'asin': math.asin,
     'atan': math.atan,
-#   'atan2': math.atan2 - Not supported yet. Use `atan(x/y)`
+    # 'atan2': math.atan2 - Not supported yet. Use `atan(x/y)`
     'ceil': math.ceil,
     'cos': math.cos,
     'cosh': math.cosh,
@@ -22,12 +22,12 @@ _FUNCTIONS = {
     'floor': math.floor,
     'fmod': math.fmod,
     'frexp': math.frexp,
-#   'hypot': math.hypot, - Not supported yet. Use `sqrt(x*x + y*y)`
+    # 'hypot': math.hypot, - Not supported yet. Use `sqrt(x*x + y*y)`
     'ldexp': math.ldexp,
     'log': math.log,
     'log10': math.log10,
     'modf': math.modf,
-#   'pow': math.pow, - Not supported yet. Use `x**y`
+    # 'pow': math.pow, - Not supported yet. Use `x**y`
     'radians': math.radians,
     'sin': math.sin,
     'sinh': math.sinh,
@@ -226,8 +226,7 @@ def evaluate(expression, vars = None):
     if int(value) == value:
         return int(value)
 
-    # If Python made some silly precision error 
-    # like x.99999999999996, just return x+1 as an integer 
+    # If Python made some silly precision error like x.99999999999996, just return x+1 as an integer 
     epsilon = 0.0000000001
     if int(value + epsilon) != int(value):
         return int(value + epsilon)
