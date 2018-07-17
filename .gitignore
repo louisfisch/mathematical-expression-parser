@@ -1,0 +1,4 @@
+.DS_Store
+# Ignore swap files
+*.swp
+*.pyc

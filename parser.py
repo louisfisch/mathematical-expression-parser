@@ -1,6 +1,3 @@
-# A really simple expression evaluator supporting the 
-# four basic math functions, parentheses, and variables. 
-
 import math
 
 _CONSTANTS = {
@@ -14,7 +11,7 @@ _FUNCTIONS = {
     'acos': math.acos,
     'asin': math.asin,
     'atan': math.atan,
-    'atan2': math.atan2,
+    # 'atan2': math.atan2 - Not supported yet. Use `atan(x/y)`
     'ceil': math.ceil,
     'cos': math.cos,
     'cosh': math.cosh,
@@ -24,12 +21,12 @@ _FUNCTIONS = {
     'floor': math.floor,
     'fmod': math.fmod,
     'frexp': math.frexp,
-    'hypot': math.hypot,
+    # 'hypot': math.hypot, - Not supported yet. Use `sqrt(x*x + y*y)`
     'ldexp': math.ldexp,
     'log': math.log,
     'log10': math.log10,
     'modf': math.modf,
-    'pow': math.pow,
+    # 'pow': math.pow, - Not supported yet. Use `x**y`
     'radians': math.radians,
     'sin': math.sin,
     'sinh': math.sinh,
@@ -215,35 +212,3 @@ class Parser:
                     "I was expecting to find a number at character " + str(self.index) + " but instead I found a '" + char + "'. What's up with that?")
 
         return float(strValue)
-
-def evaluate(expression, vars = None):
-    try:
-        p = Parser(expression, vars)
-        value = p.getValue()
-    except Exception as (ex):
-        msg = ex.message
-        raise Exception(msg)
-
-    # Return an integer type if the answer is an integer 
-    if int(value) == value:
-        return int(value)
-
-    # If Python made some silly precision error 
-    # like x.99999999999996, just return x+1 as an integer 
-    epsilon = 0.0000000001
-    if int(value + epsilon) != int(value):
-        return int(value + epsilon)
-    if int(value - epsilon) != int(value):
-        return int(value)
-    return value
-
-if __name__ == "__main__":
-    print evaluate("cos(x+4*3) + 2 * 3", { 'x': 5  })
-    print evaluate("exp(0)")
-    print evaluate("-(1 + 2) * 3")
-    print evaluate("(1-2)/3.0 + 0.0000")
-    print evaluate("abs(-2) + pi / 4")
-    print evaluate("(x + e * 10) / 10", { 'x' : 3 })
-    print evaluate("1.0 / 3 * 6")
-    print evaluate("(1 - 1 + -1) * pi")
-    print evaluate("cos(pi) * 1")
