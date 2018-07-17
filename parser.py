@@ -11,7 +11,7 @@ _FUNCTIONS = {
     'acos': math.acos,
     'asin': math.asin,
     'atan': math.atan,
-    # 'atan2': math.atan2 - Not supported yet. Use `atan(x/y)`
+    'atan2': math.atan2,
     'ceil': math.ceil,
     'cos': math.cos,
     'cosh': math.cosh,
@@ -21,12 +21,12 @@ _FUNCTIONS = {
     'floor': math.floor,
     'fmod': math.fmod,
     'frexp': math.frexp,
-    # 'hypot': math.hypot, - Not supported yet. Use `sqrt(x*x + y*y)`
+    'hypot': math.hypot,
     'ldexp': math.ldexp,
     'log': math.log,
     'log10': math.log10,
     'modf': math.modf,
-    # 'pow': math.pow, - Not supported yet. Use `x**y`
+    'pow': math.pow,
     'radians': math.radians,
     'sin': math.sin,
     'sinh': math.sinh,
@@ -59,6 +59,20 @@ class Parser:
 
     def hasNext(self):
         return self.index < len(self.string)
+
+    def isNext(self, value):
+        return self.string[self.index:self.index+len(value)] == value
+
+    def popIfNext(self, value):
+        if self.isNext(value):
+            self.index += len(value)
+            return True
+        return False
+
+    def popExpected(self, value):
+        if not self.popIfNext(value):
+            raise Exception("Expected '" + value + "' at index " + str(self.index))
+
 
     def skipWhitespace(self):
         while self.hasNext():
@@ -135,6 +149,19 @@ class Parser:
         else:
             return self.parseNegative()
 
+    def parseArguments(self):
+        args = []
+        self.skipWhitespace()
+        self.popExpected('(')
+        while not self.popIfNext(')'):
+            self.skipWhitespace()
+            if len(args) > 0:
+                self.popExpected(',')
+                self.skipWhitespace()
+            args.append(self.parseExpression())
+            self.skipWhitespace()
+        return args
+
     def parseNegative(self):
         self.skipWhitespace()
         char = self.peek()
@@ -169,8 +196,8 @@ class Parser:
         
         function = _FUNCTIONS.get(var.lower())
         if function != None:
-            arg = self.parseParenthesis()
-            return float(function(arg))
+            args = self.parseArguments()
+            return float(function(*args))
         
         constant = _CONSTANTS.get(var.lower())
         if constant != None:
