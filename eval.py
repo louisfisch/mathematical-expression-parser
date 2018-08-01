@@ -31,3 +31,6 @@ if __name__ == "__main__":
     print evaluate("1.0 / 3 * 6")
     print evaluate("(1 - 1 + -1) * pi")
     print evaluate("cos(pi) * 1")
+    print evaluate("atan2(2, 1)")
+    print evaluate("hypot(5, 12)")
+    print evaluate("pow(3, 5)")
