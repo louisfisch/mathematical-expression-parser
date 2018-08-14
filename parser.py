@@ -36,14 +36,21 @@ _FUNCTIONS = {
 }
 
 class Parser:
-    def __init__(self, string, vars = None):
+    def __init__(self, string, vars = None, max_exponent = 40):
         self.string = string
         self.index = 0
+        self.max_exponent = max_exponent
         self.vars = {} if vars == None else vars.copy()
         for constant in _CONSTANTS.keys():
             if self.vars.get(constant) != None:
                 raise Exception("Cannot redefine the value of " + var)
-
+            
+    def safe_power(self, l, r):
+        if l > self.max_exponent or r > self.max_exponent:
+            raise Exception("Exponent term above max exponent allowed!")
+        else:
+            return l ** r
+        
     def getValue(self):
         value = self.parseExpression()
         self.skipWhitespace()
@@ -103,7 +110,7 @@ class Parser:
         return sum(values)
 
     def parseMultiplication(self):
-        values = [self.parseParenthesis()]
+        values = [self.parseExponentiation()]
             
         while True:
             self.skipWhitespace()
@@ -111,11 +118,11 @@ class Parser:
                 
             if char == '*':
                 self.index += 1
-                values.append(self.parseParenthesis())
+                values.append(self.parseExponentiation())
             elif char == '/':
                 div_index = self.index
                 self.index += 1
-                denominator = self.parseParenthesis()
+                denominator = self.parseExponentiation()
                      
                 if denominator == 0:
                     raise Exception(
@@ -130,7 +137,26 @@ class Parser:
         for factor in values:
             value *= factor
         return value
-
+    
+    def parseExponentiation(self):
+        values = [self.parseParenthesis()]
+        
+        while True:
+            self.skipWhitespace()
+            char = self.peek()
+            
+            if char == '^':
+                self.index += 1
+                values.append(self.parseParenthesis())
+            else:
+                break
+            
+        acc = 1
+        
+        for exponent in values[::-1]:
+            acc = self.safe_power(exponent, acc)
+        return acc
+    
     def parseParenthesis(self):
         self.skipWhitespace()
         char = self.peek()
