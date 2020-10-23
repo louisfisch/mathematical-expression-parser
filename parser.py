@@ -18,6 +18,7 @@ _FUNCTIONS = {
     'degrees': math.degrees,
     'exp': math.exp,
     'fabs': math.fabs,
+    'fact': math.factorial,
     'floor': math.floor,
     'fmod': math.fmod,
     'frexp': math.frexp,
